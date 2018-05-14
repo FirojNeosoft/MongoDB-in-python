@@ -1,0 +1,90 @@
+# create virtualenv and then hit "pip install pymongo"
+>>> from pymongo import MongoClient
+>>> client = MongoClient('localhost', 27017)
+>>> client.database_names()
+['admin', 'config', 'local', 'mydb']
+>>> db = client.mydb
+>>> db
+Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'mydb')
+>>> db.collection_names()
+['post']
+>>> posts = db.post
+>>> posts
+Collection(Database(MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True), 'mydb'), 'post')
+>>> db.posts.find()
+<pymongo.cursor.Cursor object at 0x7f7830414438>
+>>> records = db.posts.find()
+>>> for r in records:
+...     print(r)
+{'_id': ObjectId('5ad868f8e9a609bc457bb74f'), 'title': 'FB Post', 'description': 'advertisement', 'by': 'xyz', 'url': 'xyz.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-04-19', 'like': 1.0}, {'user': 'lmn', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad86f9ae9a609bc457bb750'), 'title': 'Twitter Post', 'description': 'advertisement', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 25.0, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad8a089e9a609bc457bb751'), 'title': 'Instangram Post', 'description': 'marketing', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+>>> p = {'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]} 
+>>> result = posts.insert_one(p)
+>>> result
+<pymongo.results.InsertOneResult object at 0x7f782a6692c8>
+>>> print('One post: {0}'.format(result.inserted_id))
+One post: 5af9379ff4856d148ffda8c6
+>>> posts_data = [{'title': 'WhatsApp Post', 'description': 'marketing', 'by': 'chetan', 'url': 'cbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akvhdfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}, {'title': 'Wechat Post', 'description': 'marketing', 'by': 'chandan', 'url': 'cvgbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemn', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}]
+>>> new_result = post.insert_many(posts_data)
+>>> print('Multiple posts: {0}'.format(new_result.inserted_ids))
+Multiple posts: [ObjectId('5af93985f4856d148ffda8c7'), ObjectId('5af93985f4856d148ffda8c8')]
+>>> new_records = db.post.find()
+>>> for r in new_records:    
+...     print(r)
+{'_id': ObjectId('5ad868f8e9a609bc457bb74f'), 'title': 'FB Post', 'description': 'advertisement', 'by': 'xyz', 'url': 'xyz.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-04-19', 'like': 1.0}, {'user': 'lmn', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad86f9ae9a609bc457bb750'), 'title': 'Twitter Post', 'description': 'advertisement', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 25.0, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad8a089e9a609bc457bb751'), 'title': 'Instangram Post', 'description': 'marketing', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5af9379ff4856d148ffda8c6'), 'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c7'), 'title': 'WhatsApp Post', 'description': 'marketing', 'by': 'chetan', 'url': 'cbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akvhdfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c8'), 'title': 'Wechat Post', 'description': 'marketing', 'by': 'chandan', 'url': 'cvgbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemn', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+>>> telegram_post = posts.find({'title':'telegram post'})
+>>> telegram_post.count()
+0
+>>> telegram_post = posts.find({'title':'Telegram Post'}) #case sentive to search data
+>>> telegram_post.count()
+1
+>>> for post in telegram_post:
+...     print(post)
+... 
+{'_id': ObjectId('5af9379ff4856d148ffda8c6'), 'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+>>> telegram_post # find() returns a Cursor instance, which allows us to iterate over all matching documents.
+<pymongo.cursor.Cursor object at 0x7f7830493550>
+>>> telegram_post = posts.find_one({'title':'Telegram Post'}) # find_one() returns dict.
+>>> telegram_post
+{'_id': ObjectId('5af9379ff4856d148ffda8c6'), 'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+>>> posts.update({ 'description': "advertisement" },{ '$set': { "likes" : 100 } }, upsert=False, multi=True)
+{'n': 2, 'nModified': 2, 'ok': 1.0, 'updatedExisting': True}
+>>> for r in posts.find():
+...     print(r)
+... 
+{'_id': ObjectId('5ad868f8e9a609bc457bb74f'), 'title': 'FB Post', 'description': 'advertisement', 'by': 'xyz', 'url': 'xyz.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-04-19', 'like': 1.0}, {'user': 'lmn', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad86f9ae9a609bc457bb750'), 'title': 'Twitter Post', 'description': 'advertisement', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad8a089e9a609bc457bb751'), 'title': 'Instangram Post', 'description': 'marketing', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5af9379ff4856d148ffda8c6'), 'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c7'), 'title': 'WhatsApp Post', 'description': 'marketing', 'by': 'chetan', 'url': 'cbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akvhdfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c8'), 'title': 'Wechat Post', 'description': 'marketing', 'by': 'chandan', 'url': 'cvgbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemn', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+>>> posts.delete_one({'description': 'marketing'})
+>>> for r in posts.find():
+...     print(r)
+... 
+{'_id': ObjectId('5ad868f8e9a609bc457bb74f'), 'title': 'FB Post', 'description': 'advertisement', 'by': 'xyz', 'url': 'xyz.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-04-19', 'like': 1.0}, {'user': 'lmn', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad86f9ae9a609bc457bb750'), 'title': 'Twitter Post', 'description': 'advertisement', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5af9379ff4856d148ffda8c6'), 'title': 'Telegram Post', 'description': 'marketing', 'by': 'vishal', 'url': 'abcd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrmnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c7'), 'title': 'WhatsApp Post', 'description': 'marketing', 'by': 'chetan', 'url': 'cbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akvhdfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemnere', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+{'_id': ObjectId('5af93985f4856d148ffda8c8'), 'title': 'Wechat Post', 'description': 'marketing', 'by': 'chandan', 'url': 'cvgbgfd.kom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 10.0, 'comments': [{'user': 'akfbc', 'message': 'good', 'dateCreated': '2018-05-14', 'like': 1.0}, {'user': 'lrvfemn', 'message': 'great', 'dateCreated': '2018-05-14', 'like': 2.0}]}
+
+>>> posts.delete_many({'description': 'marketing'})
+>>> for r in posts.find():
+...     print(r)
+... 
+{'_id': ObjectId('5ad868f8e9a609bc457bb74f'), 'title': 'FB Post', 'description': 'advertisement', 'by': 'xyz', 'url': 'xyz.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abc', 'message': 'good', 'dateCreated': '2018-04-19', 'like': 1.0}, {'user': 'lmn', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+{'_id': ObjectId('5ad86f9ae9a609bc457bb750'), 'title': 'Twitter Post', 'description': 'advertisement', 'by': 'akshay', 'url': 'xyzdcsd.xom', 'tags': ['TAG1', 'TAG2', 'TAG3'], 'likes': 100, 'comments': [{'user': 'abcsfdc', 'message': 'good', 'dateCreated': '2018-04-20', 'like': 1.0}, {'user': 'lmnere', 'message': 'great', 'dateCreated': '2018-04-19', 'like': 2.0}]}
+
+>>> posts.remove()   # removed all documents
+{'n': 2, 'ok': 1.0}
+
+
+
+
+
