@@ -84,7 +84,126 @@ Multiple posts: [ObjectId('5af93985f4856d148ffda8c7'), ObjectId('5af93985f4856d1
 >>> posts.remove()   # removed all documents
 {'n': 2, 'ok': 1.0}
 
+------------------------------------------------------------------------------------------------------------------------------------------------
+# MongoEngine(pip install mongoengine)
+
+>>> import datetime
+>>> from mongoengine import *
+>>> connect('mydb')   # By default, MongoEngine assumes that the mongod instance is running on localhost on port 27017.
+MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True, read_preference=Primary())
+>>> class User(Document):
+...     name = StringField()
+... 
+>>> class Comment(EmbeddedDocument):
+...     content = StringField() 
+... 
+>>> class Page(Document):
+...     title = StringField(max_length=200, required=True, unique=True)
+...     content = StringField()
+...     date_modified = DateTimeField(default=datetime.datetime.utcnow)
+...     comments = ListField(EmbeddedDocumentField(Comment))
+...     author = ReferenceField(User)
+...
+>>> user1 = User(name="john")
+>>> user1.save()  #  If the document does not exist in the database, it will be created. If it is already exist, then update.
+>>> user1.name
+'john'
+>>> user2 = User(name="marry")
+>>> user2.save()
+>>> user2.name
+'marry'
+>>> comment1 = Comment(content="good")
+>>> comment1.save()
+>>> comment2 = Comment(content="great work")
+>>> comment2.save()
+>>> page1 = Page(title="python", content="python is programming lang", comments=[comment1,comment2], author=user1)
+>>> page1.save()
+>>> page1.date_modified
+datetime.datetime(2018, 5, 15, 9, 20, 8, 845431)
+>>> page1.title
+'python'
+>>> page1.content
+'python is programming lang'
+>>> page1.comments
+[<Comment: Comment object>, <Comment: Comment object>]
+>>> page1.comments[0].content
+'good'
+>>> page1.author
+<User: User object>
+>>> page1.author.name
+'john'
+>>> page2 = Page(title="test", content="test", comments=[comment1], author=user2)
+>>> page2.save()
+>>> page1.id
+ObjectId('5afaa9e9f4856d202540740d')
+>>> page2.id
+ObjectId('5afaabcff4856d2025407410')                                    
+>>> page2.title
+'test'
+# Update operation
+>>> page2.title = "java"
+>>> page2.content = "java is programming lang"
+>>> page2.comments = [comment1,comment2]
+>>> page2.save()
+>>> page2.title
+'java'
+>>> page2.content
+'java is programming lang'
+>>> page2.comments
+[<Comment: Comment object>, <Comment: Comment object>]
+>>> Page.objects
+[<Page: Page object>, <Page: Page object>]
+>>> l = [p.title for p in Page.objects]
+>>> l
+['python', 'java']
+>>> Page.objects(comments__content="good")
+[<Page: Page object>, <Page: Page object>]
+>>> Page.objects(author__name="john")
+    raise InvalidQueryError(e)
+mongoengine.errors.InvalidQueryError: Cannot perform join in mongoDB: author__name
+
+# aggregate functions
+yearly_expense = Employee.objects.sum('salary')
+mean_age = User.objects.average('age')
+
+>>> Page.objects.count()
+2
+>>> Page.objects.update_one(set__title='Example Page') # updated first object only
+1
+>>> Page.objects[0].title
+'Example Page'
+>>> Page.objects[1].title
+'java'
+>>> Page.objects.update(content="Example content") # updated all objects
+2
+>>> Page.objects[0].content
+'Example content'
+>>> Page.objects[1].content
+'Example content'
+>>> 
+
+# created custom queryset
+class AwesomerQuerySet(QuerySet):
+
+    def get_awesome(self):
+        return self.filter(awesome=True)
+
+class Page(Document):
+    meta = {'queryset_class': AwesomerQuerySet}
+# To call custom query set:
+Page.objects.get_awesome()
 
 
+# Slicing
+>>> User.objects[1:]
+[<User: User object>]
+>>> 
 
+# Delete operation
+>>> Page.objects 
+[<Page: Page object>, <Page: Page object>]
+>>> Page.objects[0].delete()
+>>> Page.objects
+[<Page: Page object>]
+>>> 
 
