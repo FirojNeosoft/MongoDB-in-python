@@ -207,3 +207,4 @@ Page.objects.get_awesome()
 [<Page: Page object>]
 >>> 
 
+Note- Refer url- https://www.ibm.com/developerworks/library/os-django-mongo/index.html  to use mongodb with django.
